@@ -66,7 +66,7 @@ const Login = () => {
       <div className="login-content">
         <div className="login-header">
           <div className="logo">
-            <span className="logo-icon">🏢</span>
+            <img src="/logo.png" alt="Scravo Logo" className="logo-icon-img" />
             <h1>scravo</h1>
           </div>
           <div className="role-badge" style={{ backgroundColor: roleInfo.color }}>

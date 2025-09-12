@@ -5,7 +5,8 @@ const api = axios.create({
   baseURL: 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  timeout: 10000 // 10 seconds timeout
 });
 
 // Add token to requests automatically
@@ -41,14 +42,15 @@ export const authAPI = {
   register: (data) => api.post('/auth/register', data),
   login: (data) => api.post('/auth/login', data),
   getMe: () => api.get('/auth/me'),
-  updateProfile: (data) => api.put('/auth/profile', data)
+  updateProfile: (data) => api.put('/auth/profile', data),
+  checkAdminExists: () => api.get('/auth/check-admin')
 };
 
 // Listing APIs
 export const listingAPI = {
-  getAll: (params) => api.get('/listings', { params }),
+  getAll: (params) => api.get('/listings/marketplace', { params }),
   getOne: (id) => api.get(`/listings/${id}`),
-  getMy: () => api.get('/listings/my-listings'),
+  getMy: () => api.get('/listings/seller/my-listings'),
   create: (data) => api.post('/listings', data, {
     headers: { 'Content-Type': 'multipart/form-data' }
   }),
@@ -67,6 +69,28 @@ export const transactionAPI = {
   cancel: (id) => api.delete(`/transactions/${id}`),
   getSellerStats: () => api.get('/transactions/stats/seller'),
   getBuyerStats: () => api.get('/transactions/stats/buyer')
+};
+
+// Order APIs
+export const orderAPI = {
+  create: (data) => api.post('/orders', data),
+  getBuyerOrders: () => api.get('/orders/buyer/my-orders'),
+  getSellerOrders: () => api.get('/orders/seller/my-orders'),
+  getOne: (id) => api.get(`/orders/${id}`),
+  updateStatus: (id, status, note) => api.put(`/orders/${id}/status`, { status, note }),
+  cancelOrder: (id) => api.put(`/orders/${id}/cancel`),
+  confirmDelivery: (id, isUndamaged, feedback) => api.put(`/orders/${id}/confirm-delivery`, { isUndamaged, feedback })
+};
+
+// Admin APIs
+export const adminAPI = {
+  getStats: () => api.get('/admin/stats'),
+  getAllUsers: () => api.get('/admin/users'),
+  getUserStats: () => api.get('/admin/users/stats'),
+  getAllListings: () => api.get('/admin/listings'),
+  getAllOrders: () => api.get('/admin/orders'),
+  deleteUser: (id) => api.delete(`/admin/users/${id}`),
+  deleteListing: (id) => api.delete(`/admin/listings/${id}`)
 };
 
 export default api;

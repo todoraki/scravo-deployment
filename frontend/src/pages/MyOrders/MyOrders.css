@@ -1,0 +1,280 @@
+.my-orders {
+  padding: 20px;
+}
+
+.back-button {
+  margin-bottom: 20px;
+  color: #667eea;
+  font-weight: 600;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 0;
+}
+
+.back-button:hover {
+  text-decoration: underline;
+}
+
+.orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.order-card {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eee;
+}
+
+.order-header h3 {
+  font-size: 20px;
+  color: #1a1a1a;
+  margin-bottom: 5px;
+}
+
+.order-id {
+  font-size: 12px;
+  color: #666;
+}
+
+.order-body {
+  margin-bottom: 20px;
+}
+
+.order-details-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.detail-item .label {
+  font-size: 14px;
+  color: #666;
+}
+
+.detail-item .value {
+  font-size: 16px;
+  color: #1a1a1a;
+  font-weight: 600;
+}
+
+.detail-item .total-price {
+  color: #10b981;
+  font-size: 18px;
+}
+
+.party-info {
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.order-notes {
+  background: #fef3c7;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #92400e;
+}
+
+.order-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.btn-sm {
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #dc2626;
+}
+
+.status-badge {
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.rejection-reason {
+  background: #fee2e2;
+  border-left: 4px solid #ef4444;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.rejection-reason strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #991b1b;
+  font-size: 14px;
+}
+
+.rejection-reason p {
+  color: #7f1d1d;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.delivery-feedback {
+  background: #d1fae5;
+  border-left: 4px solid #10b981;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 15px;
+}
+
+.delivery-feedback strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #065f46;
+  font-size: 14px;
+}
+
+.delivery-feedback p {
+  color: #047857;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.status-timeline {
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+}
+
+.status-timeline strong {
+  display: block;
+  margin-bottom: 15px;
+  color: #1a1a1a;
+  font-size: 14px;
+}
+
+.timeline-items {
+  position: relative;
+  padding-left: 30px;
+}
+
+.timeline-items::before {
+  content: '';
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: #e5e7eb;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-item:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -26px;
+  top: 4px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #667eea;
+  border: 3px solid white;
+  box-shadow: 0 0 0 2px #e5e7eb;
+}
+
+.timeline-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.timeline-status {
+  font-weight: 600;
+  color: #1a1a1a;
+  text-transform: capitalize;
+  font-size: 14px;
+}
+
+.timeline-date {
+  font-size: 12px;
+  color: #666;
+}
+
+.timeline-note {
+  font-size: 13px;
+  color: #666;
+  font-style: italic;
+  margin-top: 5px;
+  padding: 8px;
+  background: #f9fafb;
+  border-radius: 4px;
+}
+
+@media (max-width: 768px) {
+  .my-orders {
+    padding: 15px;
+  }
+  
+  .order-details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .order-actions {
+    flex-direction: column;
+  }
+  
+  .order-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .my-orders {
+    padding: 10px;
+  }
+  
+  .order-card {
+    padding: 15px;
+  }
+  
+  .order-header h3 {
+    font-size: 18px;
+  }
+}

@@ -25,8 +25,10 @@
   margin-bottom: 30px;
 }
 
-.logo-icon {
-  font-size: 48px;
+.logo-icon-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
 }
 
 .logo h1 {
@@ -114,6 +116,38 @@
   text-align: center;
   color: white;
   font-size: 14px;
+}
+
+.admin-login-link {
+  text-align: center;
+  margin-top: 30px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+}
+
+.admin-login-link p {
+  color: white;
+  font-size: 14px;
+  margin-bottom: 10px;
+}
+
+.admin-login-btn {
+  padding: 12px 30px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.admin-login-btn:hover {
+  background: #4f46e5;
+  transform: scale(1.05);
 }
 
 @media (max-width: 768px) {

@@ -33,29 +33,26 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
-
-    // Validation
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
-
     setLoading(true);
 
-    const { confirmPassword, ...registrationData } = formData;
-    const result = await register(registrationData);
+    const result = await register({
+      ...formData,
+      role: selectedRole
+    });
 
     setLoading(false);
 
     if (result.success) {
       navigate('/dashboard');
     } else {
-      setError(result.message);
+      if (result.message.includes('Admin registration is closed')) {
+        setError('⚠️ Admin registration is no longer available. An admin already exists. Please use Admin Login instead.');
+        setTimeout(() => {
+          navigate('/', { replace: true });
+        }, 4000);
+      } else {
+        setError(result.message);
+      }
     }
   };
 

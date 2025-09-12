@@ -25,13 +25,22 @@ const MyListings = () => {
     }
   };
 
-  const handleDelete = async (id) => {
+  const handleViewDetails = (listingId) => {
+    navigate(`/listing/${listingId}`);
+  };
+
+  const handleEdit = (listingId) => {
+    navigate(`/edit-listing/${listingId}`);
+  };
+
+  const handleDelete = async (listingId) => {
     if (window.confirm('Are you sure you want to delete this listing?')) {
       try {
-        await listingAPI.delete(id);
-        setListings(listings.filter(listing => listing._id !== id));
+        await listingAPI.delete(listingId);
+        alert('Listing deleted successfully');
+        fetchListings();
       } catch (error) {
-        alert('Failed to delete listing');
+        alert(error.response?.data?.message || 'Failed to delete listing');
       }
     }
   };
@@ -123,15 +132,20 @@ const MyListings = () => {
                           <img 
                             src={`http://localhost:5000${listing.images[0]}`} 
                             alt={listing.materialTitle}
-                            onError={(e) => e.target.src = 'https://via.placeholder.com/60'}
+                            onError={(e) => {
+                              console.error('Image load error:', e.target.src);
+                              e.target.style.display = 'none';
+                              e.target.parentElement.innerHTML = '<div class="no-image">📦</div>';
+                            }}
                           />
                         ) : (
                           <div className="no-image">📦</div>
                         )}
                       </div>
+
                       <div>
                         <div className="material-title">{listing.materialTitle}</div>
-                        <div className="material-location">📍 {listing.location}</div>
+                        <div className="material-location">📍 {typeof listing.location === 'string' ? listing.location : listing.location?.address || 'N/A'}</div>
                       </div>
                     </div>
                   </td>
@@ -141,20 +155,39 @@ const MyListings = () => {
                   <td>{getStatusBadge(listing.status)}</td>
                   <td>{listing.views || 0}</td>
                   <td>
-                    <div className="action-buttons">
+                    <div className="material-actions">
                       <button 
-                        className="btn-icon btn-edit"
-                        title="Edit"
-                        onClick={() => navigate(`/edit-listing/${listing._id}`)}
+                        className="btn btn-secondary btn-sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          navigate(`/listing/${listing._id}`);
+                        }}
+                        type="button"
                       >
-                        ✏️
+                        👁️ View
                       </button>
                       <button 
-                        className="btn-icon btn-delete"
-                        title="Delete"
-                        onClick={() => handleDelete(listing._id)}
+                        className="btn btn-primary btn-sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          navigate(`/edit-listing/${listing._id}`);
+                        }}
+                        type="button"
                       >
-                        🗑️
+                        ✏️ Edit
+                      </button>
+                      <button 
+                        className="btn btn-danger btn-sm"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          handleDelete(listing._id);
+                        }}
+                        type="button"
+                      >
+                        🗑️ Delete
                       </button>
                     </div>
                   </td>

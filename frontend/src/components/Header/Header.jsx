@@ -12,13 +12,13 @@ const Header = () => {
     navigate('/');
   };
 
-  const getRoleColor = () => {
+  const getRoleColor = (role) => {
     const colors = {
       admin: '#6366f1',
       buyer: '#10b981',
       seller: '#f59e0b'
     };
-    return colors[user.role] || '#667eea';
+    return colors[role] || '#6b7280';
   };
 
   return (
@@ -26,15 +26,25 @@ const Header = () => {
       <div className="header-content">
         <div className="header-left">
           <h3>Welcome back, {user.name}!</h3>
-          <p>Manage your {user.role} dashboard</p>
+          <p>Have a great day</p>
         </div>
         <div className="header-right">
-          <div className="user-badge" style={{ backgroundColor: getRoleColor() }}>
-            <span>{user.role}</span>
-          </div>
-          <button className="logout-btn" onClick={handleLogout}>
-            <span>🚪</span>
-            <span>Logout</span>
+          <span 
+            className="user-badge" 
+            style={{ backgroundColor: getRoleColor(user.role) }}
+          >
+            {user.role}
+          </span>
+          <button 
+            className="logout-btn" 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleLogout();
+            }}
+            type="button"
+          >
+            🚪 Logout
           </button>
         </div>
       </div>

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { listingAPI, transactionAPI } from '../../utils/api';
+import { listingAPI, orderAPI, adminAPI } from '../../utils/api';
 import './Dashboard.css';
 
 const Dashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchDashboardData();
@@ -14,63 +17,197 @@ const Dashboard = () => {
 
   const fetchDashboardData = async () => {
     try {
+      setLoading(true);
+      console.log('Current user role:', user.role);
+      
       if (user.role === 'seller') {
-        const [listingsRes, statsRes] = await Promise.all([
+        const [listingsRes, ordersRes] = await Promise.all([
           listingAPI.getMy(),
-          transactionAPI.getSellerStats()
+          orderAPI.getSellerOrders()
         ]);
         
-        const activeListings = listingsRes.data.data.filter(l => l.status === 'active').length;
-        const totalListings = listingsRes.data.data.length;
+        const listings = listingsRes.data.data;
+        const orders = ordersRes.data.data;
         
         setStats({
-          activeListings,
-          totalListings,
-          ...statsRes.data.data
+          totalListings: listings.length,
+          activeListings: listings.filter(l => l.status === 'active').length,
+          totalOrders: orders.length,
+          pendingOffers: orders.filter(o => o.status === 'pending').length,
+          confirmedOffers: orders.filter(o => o.status === 'confirmed').length,
+          shippedOrders: orders.filter(o => o.status === 'shipped').length,
+          completedOrders: orders.filter(o => o.status === 'delivered').length,
+          totalRevenue: orders
+            .filter(o => o.status === 'delivered')
+            .reduce((sum, o) => sum + o.orderDetails.totalPrice, 0),
+          pendingRevenue: orders
+            .filter(o => ['pending', 'confirmed', 'shipped'].includes(o.status))
+            .reduce((sum, o) => sum + o.orderDetails.totalPrice, 0)
         });
+        
       } else if (user.role === 'buyer') {
-        const statsRes = await transactionAPI.getBuyerStats();
-        setStats(statsRes.data.data);
-      } else if (user.role === 'admin') {
-        // Admin stats would come from a different endpoint
-        const [listingsRes, transactionsRes] = await Promise.all([
-          listingAPI.getAll(),
-          transactionAPI.getAll()
-        ]);
+        const ordersRes = await orderAPI.getBuyerOrders();
+        const orders = ordersRes.data.data;
         
         setStats({
-          totalListings: listingsRes.data.count,
-          totalTransactions: transactionsRes.data.count,
-          activeListings: listingsRes.data.data.filter(l => l.status === 'active').length,
+          totalOrders: orders.length,
+          pendingOrders: orders.filter(o => o.status === 'pending').length,
+          confirmedOrders: orders.filter(o => o.status === 'confirmed').length,
+          shippedOrders: orders.filter(o => o.status === 'shipped').length,
+          completedOrders: orders.filter(o => o.status === 'delivered').length,
+          cancelledOrders: orders.filter(o => o.status === 'cancelled').length,
+          totalSpent: orders
+            .filter(o => o.status === 'delivered')
+            .reduce((sum, o) => sum + o.orderDetails.totalPrice, 0),
+          pendingAmount: orders
+            .filter(o => ['pending', 'confirmed', 'shipped'].includes(o.status))
+            .reduce((sum, o) => sum + o.orderDetails.totalPrice, 0)
         });
+      } else if (user.role === 'admin') {
+        console.log('Fetching admin stats...');
+        const statsRes = await adminAPI.getStats();
+        console.log('Admin API response:', statsRes);
+        console.log('Admin stats data:', statsRes.data);
+        
+        if (statsRes.data && statsRes.data.data) {
+          console.log('Setting stats:', statsRes.data.data);
+          setStats(statsRes.data.data);
+          setError('');
+        } else {
+          console.error('Invalid response structure:', statsRes);
+          setError('Invalid data received from server');
+        }
       }
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
+      console.error('Error response:', error.response);
+      setError(error.response?.data?.message || 'Failed to fetch dashboard data');
     } finally {
       setLoading(false);
     }
   };
 
   const getSellerStats = () => [
-    { icon: '📦', label: 'Active Listings', value: stats?.activeListings || 0, color: '#3b82f6' },
-    { icon: '🛒', label: 'Total Sales', value: stats?.totalSales || 0, color: '#10b981' },
-    { icon: '📈', label: 'Revenue', value: `$${stats?.totalRevenue?.toFixed(2) || '0.00'}`, color: '#f59e0b' },
-    { icon: '⏳', label: 'Pending Orders', value: stats?.pendingOrders || 0, color: '#8b5cf6' }
+    { 
+      icon: '📦', 
+      label: 'Active Listings', 
+      value: stats?.activeListings || 0, 
+      total: stats?.totalListings || 0,
+      color: '#3b82f6',
+      link: '/my-listings'
+    },
+    { 
+      icon: '⏳', 
+      label: 'Pending Offers', 
+      value: stats?.pendingOffers || 0, 
+      color: '#f59e0b',
+      link: '/offers'
+    },
+    { 
+      icon: '✅', 
+      label: 'Confirmed Orders', 
+      value: stats?.confirmedOffers || 0, 
+      color: '#10b981',
+      link: '/offers'
+    },
+    { 
+      icon: '🚚', 
+      label: 'Shipped Orders', 
+      value: stats?.shippedOrders || 0, 
+      color: '#6366f1',
+      link: '/offers'
+    },
+    { 
+      icon: '💰', 
+      label: 'Total Revenue', 
+      value: `$${stats?.totalRevenue?.toFixed(2) || '0.00'}`, 
+      color: '#10b981',
+      subtitle: `Pending: $${stats?.pendingRevenue?.toFixed(2) || '0.00'}`
+    },
+    { 
+      icon: '📊', 
+      label: 'Completed Orders', 
+      value: stats?.completedOrders || 0, 
+      color: '#8b5cf6',
+      link: '/offers'
+    }
   ];
 
   const getBuyerStats = () => [
-    { icon: '🛒', label: 'Active Orders', value: stats?.activeOrders || 0, color: '#3b82f6' },
-    { icon: '✅', label: 'Completed Orders', value: stats?.completedOrders || 0, color: '#10b981' },
-    { icon: '💰', label: 'Total Spent', value: `$${stats?.totalSpent?.toFixed(2) || '0.00'}`, color: '#f59e0b' },
-    { icon: '📦', label: 'Total Orders', value: stats?.totalOrders || 0, color: '#8b5cf6' }
+    { 
+      icon: '🛒', 
+      label: 'Total Orders', 
+      value: stats?.totalOrders || 0, 
+      color: '#3b82f6',
+      link: '/my-orders'
+    },
+    { 
+      icon: '⏳', 
+      label: 'Pending Orders', 
+      value: stats?.pendingOrders || 0, 
+      color: '#f59e0b',
+      link: '/my-orders'
+    },
+    { 
+      icon: '✅', 
+      label: 'Confirmed Orders', 
+      value: stats?.confirmedOrders || 0, 
+      color: '#3b82f6',
+      link: '/my-orders'
+    },
+    { 
+      icon: '🚚', 
+      label: 'Shipped Orders', 
+      value: stats?.shippedOrders || 0, 
+      color: '#6366f1',
+      link: '/my-orders'
+    },
+    { 
+      icon: '💰', 
+      label: 'Total Spent', 
+      value: `$${stats?.totalSpent?.toFixed(2) || '0.00'}`, 
+      color: '#10b981',
+      subtitle: `Pending: $${stats?.pendingAmount?.toFixed(2) || '0.00'}`
+    },
+    { 
+      icon: '📦', 
+      label: 'Completed Orders', 
+      value: stats?.completedOrders || 0, 
+      color: '#8b5cf6',
+      link: '/my-orders'
+    }
   ];
 
-  const getAdminStats = () => [
-    { icon: '📦', label: 'Total Listings', value: stats?.totalListings || 0, color: '#3b82f6' },
-    { icon: '✅', label: 'Active Listings', value: stats?.activeListings || 0, color: '#10b981' },
-    { icon: '🛒', label: 'Total Transactions', value: stats?.totalTransactions || 0, color: '#f59e0b' },
-    { icon: '👥', label: 'Platform Users', value: '156', color: '#8b5cf6' }
-  ];
+  const getAdminStats = () => {
+    console.log('Getting admin stats from state:', stats);
+    
+    return [
+      { 
+        icon: '👥', 
+        label: 'Total Users', 
+        value: stats?.users?.total || 0, 
+        color: '#3b82f6',
+        subtitle: `${stats?.users?.buyers || 0} Buyers, ${stats?.users?.sellers || 0} Sellers`,
+        link: '/admin/users'
+      },
+      { 
+        icon: '📦', 
+        label: 'Total Listings', 
+        value: stats?.listings?.total || 0, 
+        color: '#10b981',
+        subtitle: `${stats?.listings?.active || 0} Active, ${stats?.listings?.sold || 0} Sold`,
+        link: '/admin/listings'
+      },
+      { 
+        icon: '🛒', 
+        label: 'Total Orders', 
+        value: stats?.orders?.total || 0, 
+        color: '#f59e0b',
+        subtitle: `${stats?.orders?.completed || 0} Completed, ${stats?.orders?.pending || 0} Pending`,
+        link: '/admin/orders'
+      }
+    ];
+  };
 
   const getStatsForRole = () => {
     if (user.role === 'seller') return getSellerStats();
@@ -87,8 +224,8 @@ const Dashboard = () => {
   };
 
   const getDashboardSubtitle = () => {
-    if (user.role === 'seller') return 'Manage your material listings and track sales';
-    if (user.role === 'buyer') return 'Track your orders and manage purchases';
+    if (user.role === 'seller') return 'Manage your listings and track offers';
+    if (user.role === 'buyer') return 'Track your orders and purchases';
     if (user.role === 'admin') return 'Monitor platform activity and manage users';
     return 'Overview of your account';
   };
@@ -101,33 +238,110 @@ const Dashboard = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="dashboard">
+        <div className="alert alert-error">
+          <span>⚠️</span>
+          <span>{error}</span>
+        </div>
+        <button className="btn btn-secondary" onClick={fetchDashboardData}>
+          Retry
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="dashboard">
       <div className="dashboard-header">
-        <h1>{getDashboardTitle()}</h1>
-        <p>{getDashboardSubtitle()}</p>
+        <div>
+          <h1>{getDashboardTitle()}</h1>
+          <p>{getDashboardSubtitle()}</p>
+        </div>
+        {user.role === 'buyer' && (
+          <button className="btn btn-primary" onClick={() => navigate('/marketplace')}>
+            🛒 Browse Marketplace
+          </button>
+        )}
+        {user.role === 'seller' && (
+          <button className="btn btn-primary" onClick={() => navigate('/create-listing')}>
+            ➕ Create Listing
+          </button>
+        )}
       </div>
 
       <div className="stats-grid">
         {getStatsForRole().map((stat, index) => (
-          <div key={index} className="stat-card" style={{ borderLeftColor: stat.color }}>
+          <div 
+            key={index} 
+            className={`stat-card ${stat.link ? 'clickable' : ''}`} 
+            style={{ borderLeftColor: stat.color }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              if (stat.link) {
+                console.log('Navigating to:', stat.link);
+                navigate(stat.link);
+              }
+            }}
+          >
             <div className="stat-icon" style={{ backgroundColor: `${stat.color}20` }}>
               <span style={{ fontSize: '32px' }}>{stat.icon}</span>
             </div>
             <div className="stat-content">
               <div className="stat-label">{stat.label}</div>
-              <div className="stat-value">{stat.value}</div>
+              <div className="stat-value">
+                {stat.value}
+                {stat.total !== undefined && <span className="stat-total"> / {stat.total}</span>}
+              </div>
+              {stat.subtitle && <div className="stat-subtitle">{stat.subtitle}</div>}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="dashboard-info">
-        <div className="info-card">
-          <h3>🎉 Welcome to Scravo!</h3>
-          <p>Start managing your {user.role === 'seller' ? 'listings' : user.role === 'buyer' ? 'orders' : 'platform'} efficiently.</p>
+      {user.role === 'seller' && stats?.pendingOffers > 0 && (
+        <div className="dashboard-alert">
+          <div className="alert-icon">⚠️</div>
+          <div className="alert-content">
+            <h3>Action Required</h3>
+            <p>You have {stats.pendingOffers} pending {stats.pendingOffers === 1 ? 'offer' : 'offers'} waiting for your response</p>
+          </div>
+          <button 
+            className="btn btn-primary" 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate('/offers');
+            }}
+            type="button"
+          >
+            Review Offers
+          </button>
         </div>
-      </div>
+      )}
+
+      {user.role === 'buyer' && stats?.shippedOrders > 0 && (
+        <div className="dashboard-alert">
+          <div className="alert-icon">📦</div>
+          <div className="alert-content">
+            <h3>Confirm Delivery</h3>
+            <p>You have {stats.shippedOrders} {stats.shippedOrders === 1 ? 'order' : 'orders'} marked as shipped. Confirm delivery once received.</p>
+          </div>
+          <button 
+            className="btn btn-primary" 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              navigate('/my-orders');
+            }}
+            type="button"
+          >
+            View Orders
+          </button>
+        </div>
+      )}
     </div>
   );
 };
