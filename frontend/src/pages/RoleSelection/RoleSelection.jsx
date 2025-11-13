@@ -104,9 +104,15 @@ const RoleSelection = () => {
           </button>
         </div>
 
-        <div className="role-selection-footer">
-          <p>© 2024 Scravo. All rights reserved.</p>
         </div>
+      </div>
+      <footer className="role-selection-footer">
+        <div className="footer-content">
+          <p>© 2025 Scravo. All rights reserved.</p>
+        </div>
+      </footer>
+    </div>
+  );
       </div>
     </div>
   );
