@@ -151,7 +151,7 @@ const MyListings = () => {
                   </td>
                   <td>{listing.category}</td>
                   <td>{listing.quantity} {listing.unit}</td>
-                  <td>${listing.pricePerUnit}</td>
+                  <td>₹{listing.pricePerUnit}</td>
                   <td>{getStatusBadge(listing.status)}</td>
                   <td>{listing.views || 0}</td>
                   <td>

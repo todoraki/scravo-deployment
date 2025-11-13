@@ -111,17 +111,17 @@ const CreateOrder = () => {
             <p className="category">{listing.category}</p>
             
             <div className="order-details">
-              <div className="detail-row">
-                <span>Price per {listing.unit}:</span>
-                <span>${listing.pricePerUnit}</span>
+              <div className="price-breakdown">
+                <span>Price per Unit:</span>
+                <span>₹{listing.pricePerUnit}</span>
               </div>
-              <div className="detail-row">
+              <div className="price-breakdown">
                 <span>Quantity:</span>
-                <span>{orderData.quantity} {listing.unit}</span>
+                <span>{quantity} {listing.unit}</span>
               </div>
-              <div className="detail-row total">
+              <div className="price-breakdown total">
                 <span>Total Amount:</span>
-                <span>${totalPrice.toFixed(2)}</span>
+                <span>₹{totalPrice.toFixed(2)}</span>
               </div>
             </div>
 
@@ -167,7 +167,7 @@ const CreateOrder = () => {
                   name="address.street"
                   value={orderData.shippingAddress.street}
                   onChange={handleChange}
-                  placeholder="123 Main Street"
+                  placeholder="123 MG Road"
                   required
                 />
               </div>
@@ -181,7 +181,7 @@ const CreateOrder = () => {
                     name="address.city"
                     value={orderData.shippingAddress.city}
                     onChange={handleChange}
-                    placeholder="New York"
+                    placeholder="Mumbai"
                     required
                   />
                 </div>
@@ -194,7 +194,7 @@ const CreateOrder = () => {
                     name="address.state"
                     value={orderData.shippingAddress.state}
                     onChange={handleChange}
-                    placeholder="NY"
+                    placeholder="Maharashtra"
                     required
                   />
                 </div>
@@ -209,7 +209,7 @@ const CreateOrder = () => {
                     name="address.zipCode"
                     value={orderData.shippingAddress.zipCode}
                     onChange={handleChange}
-                    placeholder="10001"
+                    placeholder="400001"
                     required
                   />
                 </div>
@@ -222,7 +222,7 @@ const CreateOrder = () => {
                     name="address.country"
                     value={orderData.shippingAddress.country}
                     onChange={handleChange}
-                    placeholder="USA"
+                    placeholder="India"
                     required
                   />
                 </div>
@@ -256,7 +256,7 @@ const CreateOrder = () => {
                 className="btn btn-primary btn-large"
                 disabled={loading}
               >
-                {loading ? 'Placing Order...' : `Place Order - $${totalPrice.toFixed(2)}`}
+                {loading ? 'Placing Order...' : `Place Order - ₹${totalPrice.toFixed(2)}`}
               </button>
             </div>
           </form>

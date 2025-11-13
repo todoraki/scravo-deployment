@@ -95,7 +95,7 @@ const ListingDetail = () => {
           <h1>{listing.materialTitle}</h1>
           
           <div className="price-section">
-            <div className="price">${listing.pricePerUnit}</div>
+            <div className="price">₹{listing.pricePerUnit}</div>
             <div className="unit">per {listing.unit}</div>
           </div>
 
@@ -181,7 +181,7 @@ const ListingDetail = () => {
 
               <div className="total-price">
                 <span>Total:</span>
-                <span className="amount">${(listing.pricePerUnit * orderQuantity).toFixed(2)}</span>
+                <span className="amount">₹{(listing.pricePerUnit * orderQuantity).toFixed(2)}</span>
               </div>
 
               <div className="action-buttons">

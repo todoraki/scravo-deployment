@@ -166,7 +166,7 @@ const CreateListing = () => {
                 name="materialTitle"
                 value={formData.materialTitle}
                 onChange={handleChange}
-                placeholder="e.g., High-Grade Aluminum Cans"
+                placeholder="e.g., Premium Steel Rods"
                 required
               />
             </div>
@@ -237,7 +237,7 @@ const CreateListing = () => {
             </div>
 
             <div className="form-group">
-              <label htmlFor="pricePerUnit">Price per Unit ($) *</label>
+              <label htmlFor="pricePerUnit">Price per Unit (₹) *</label>
               <input
                 type="number"
                 id="pricePerUnit"
@@ -264,7 +264,7 @@ const CreateListing = () => {
               name="location"
               value={formData.location}
               onChange={handleChange}
-              placeholder="New York, NY"
+              placeholder="Mumbai, Maharashtra"
               required
             />
           </div>

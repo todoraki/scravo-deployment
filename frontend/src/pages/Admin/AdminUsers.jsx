@@ -240,7 +240,7 @@ const AdminUsers = () => {
                       <span className="stat-label">Sales</span>
                     </div>
                     <div className="stat-item">
-                      <span className="stat-value">${user.sellerStats.revenue.toFixed(2)}</span>
+                      <span className="stat-value">₹{user.sellerStats.revenue.toFixed(2)}</span>
                       <span className="stat-label">Revenue</span>
                     </div>
                   </div>
@@ -260,7 +260,7 @@ const AdminUsers = () => {
                       <span className="stat-label">Completed</span>
                     </div>
                     <div className="stat-item">
-                      <span className="stat-value">${user.buyerStats.totalSpent.toFixed(2)}</span>
+                      <span className="stat-value">₹{user.buyerStats.totalSpent.toFixed(2)}</span>
                       <span className="stat-label">Total Spent</span>
                     </div>
                   </div>

@@ -215,7 +215,7 @@ const AdminOrders = () => {
                   <td>{order.buyer?.name || 'Unknown'}</td>
                   <td>{order.seller?.name || 'Unknown'}</td>
                   <td>{order.orderDetails?.quantity || 0} {order.orderDetails?.unit || ''}</td>
-                  <td>${order.orderDetails?.totalPrice?.toFixed(2) || '0.00'}</td>
+                  <td>₹{order.orderDetails?.totalPrice?.toFixed(2) || '0.00'}</td>
                   <td>{getStatusBadge(order.status)}</td>
                   <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                 </tr>

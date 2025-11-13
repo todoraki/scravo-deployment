@@ -126,7 +126,7 @@ const TradeHistory = () => {
                     </div>
                   </td>
                   <td>{transaction.quantity} units</td>
-                  <td className="price">${transaction.totalPrice.toFixed(2)}</td>
+                  <td className="price">₹{transaction.totalPrice.toFixed(2)}</td>
                   <td>{getStatusBadge(transaction.status)}</td>
                   <td>{formatDate(transaction.createdAt)}</td>
                 </tr>

@@ -148,7 +148,7 @@ const Settings = () => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  placeholder="+1 234 567 8900"
+                  placeholder="+91 98765 43210"
                 />
               </div>
 
@@ -159,7 +159,7 @@ const Settings = () => {
                   name="address"
                   value={formData.address}
                   onChange={handleChange}
-                  placeholder="Your address"
+                  placeholder="Mumbai, Maharashtra"
                   rows="3"
                 />
               </div>

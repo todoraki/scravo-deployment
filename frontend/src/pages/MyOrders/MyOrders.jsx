@@ -140,11 +140,11 @@ const MyOrders = () => {
                   </div>
                   <div className="detail-item">
                     <span className="label">Price per unit:</span>
-                    <span className="value">${order.orderDetails.pricePerUnit}</span>
+                    <span className="value">₹{order.orderDetails.pricePerUnit}</span>
                   </div>
                   <div className="detail-item">
                     <span className="label">Total Amount:</span>
-                    <span className="value total-price">${order.orderDetails.totalPrice.toFixed(2)}</span>
+                    <span className="value total-price">₹{order.orderDetails.totalPrice.toFixed(2)}</span>
                   </div>
                   <div className="detail-item">
                     <span className="label">Order Date:</span>

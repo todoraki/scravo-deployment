@@ -197,13 +197,13 @@ const Offers = () => {
                         <span className="label">Quantity:</span>
                         <span className="value">{offer.orderDetails.quantity} {offer.orderDetails.unit}</span>
                       </div>
-                      <div className="detail-item">
-                        <span className="label">Price/Unit:</span>
-                        <span className="value">${offer.orderDetails.pricePerUnit}</span>
+                      <div className="detail-row">
+                        <span className="label">Price per Unit:</span>
+                        <span className="value">₹{offer.orderDetails.pricePerUnit}</span>
                       </div>
-                      <div className="detail-item total">
-                        <span className="label">Total Amount:</span>
-                        <span className="value">${offer.orderDetails.totalPrice.toFixed(2)}</span>
+                      <div className="detail-row">
+                        <span className="label">Total Price:</span>
+                        <span className="value">₹{offer.orderDetails.totalPrice.toFixed(2)}</span>
                       </div>
                     </div>
                   </div>

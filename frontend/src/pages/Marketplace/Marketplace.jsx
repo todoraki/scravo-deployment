@@ -175,7 +175,7 @@ const Marketplace = () => {
                   </div>
                   <div className="detail-item">
                     <span className="label">Price:</span>
-                    <span className="value price">${listing.pricePerUnit}/{listing.unit}</span>
+                    <span className="value price">₹{listing.pricePerUnit}/{listing.unit}</span>
                   </div>
                   <div className="detail-item">
                     <span className="label">Location:</span>

@@ -144,13 +144,13 @@ const OrderDetail = () => {
               <span className="label">Quantity:</span>
               <span className="value">{order.orderDetails.quantity} {order.orderDetails.unit}</span>
             </div>
-            <div className="info-item">
-              <span className="label">Price per unit:</span>
-              <span className="value">${order.orderDetails.pricePerUnit}</span>
+            <div className="info-row">
+              <span className="label">Price per Unit:</span>
+              <span className="value">₹{order.orderDetails.pricePerUnit}</span>
             </div>
-            <div className="info-item">
-              <span className="label">Total Amount:</span>
-              <span className="value total-price">${order.orderDetails.totalPrice.toFixed(2)}</span>
+            <div className="info-row">
+              <span className="label">Total Price:</span>
+              <span className="value total-price">₹{order.orderDetails.totalPrice.toFixed(2)}</span>
             </div>
           </div>
         </div>

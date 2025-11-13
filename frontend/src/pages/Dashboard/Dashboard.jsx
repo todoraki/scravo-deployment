@@ -120,9 +120,9 @@ const Dashboard = () => {
     { 
       icon: '💰', 
       label: 'Total Revenue', 
-      value: `$${stats?.totalRevenue?.toFixed(2) || '0.00'}`, 
+      value: `₹${stats?.totalRevenue?.toFixed(2) || '0.00'}`, 
       color: '#10b981',
-      subtitle: `Pending: $${stats?.pendingRevenue?.toFixed(2) || '0.00'}`
+      subtitle: `Pending: ₹${stats?.pendingRevenue?.toFixed(2) || '0.00'}`
     },
     { 
       icon: '📊', 
@@ -163,11 +163,11 @@ const Dashboard = () => {
       link: '/my-orders'
     },
     { 
-      icon: '💰', 
+      icon: '💳', 
       label: 'Total Spent', 
-      value: `$${stats?.totalSpent?.toFixed(2) || '0.00'}`, 
-      color: '#10b981',
-      subtitle: `Pending: $${stats?.pendingAmount?.toFixed(2) || '0.00'}`
+      value: `₹${stats?.totalSpent?.toFixed(2) || '0.00'}`, 
+      color: '#f59e0b',
+      subtitle: `Pending: ₹${stats?.pendingAmount?.toFixed(2) || '0.00'}`
     },
     { 
       icon: '📦', 
