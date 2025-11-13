@@ -29,12 +29,6 @@ const Header = () => {
           <p>Have a great day</p>
         </div>
         <div className="header-right">
-          <span 
-            className="user-badge" 
-            style={{ backgroundColor: getRoleColor(user.role) }}
-          >
-            {user.role}
-          </span>
           <button 
             className="logout-btn" 
             onClick={(e) => {

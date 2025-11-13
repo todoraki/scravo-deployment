@@ -113,6 +113,15 @@ const Login = () => {
               />
             </div>
 
+            <div className="forgot-password">
+              <a href="#" onClick={(e) => {
+                e.preventDefault();
+                alert('Please contact admin at admin@scravo.com to reset your password');
+              }}>
+                Forgot Password?
+              </a>
+            </div>
+
             <button 
               type="submit" 
               className="login-btn"
