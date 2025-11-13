@@ -13,6 +13,7 @@ import CreateListing from './pages/CreateListing/CreateListing';
 import MyListings from './pages/MyListings/MyListings';
 import CreateOrder from './pages/CreateOrder/CreateOrder';
 import MyOrders from './pages/MyOrders/MyOrders';
+import OrderDetail from './pages/OrderDetail/OrderDetail';
 import Offers from './pages/Offers/Offers';
 import Settings from './pages/Settings/Settings';
 import AdminUsers from './pages/Admin/AdminUsers';
@@ -96,6 +97,16 @@ function App() {
               <ProtectedRoute>
                 <MainLayout>
                   <MyOrders />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/order/:id"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <OrderDetail />
                 </MainLayout>
               </ProtectedRoute>
             }
