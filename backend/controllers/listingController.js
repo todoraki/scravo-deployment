@@ -188,6 +188,10 @@ exports.getListing = async (req, res) => {
 // Update listing
 exports.updateListing = async (req, res) => {
   try {
+    console.log('=== UPDATE LISTING DEBUG ===');
+    console.log('Body:', req.body);
+    console.log('Files:', req.files);
+    
     let listing = await Listing.findById(req.params.id);
 
     if (!listing) {
@@ -204,9 +208,37 @@ exports.updateListing = async (req, res) => {
       });
     }
 
+    // Prepare update data
+    const updateData = { ...req.body };
+    
+    // Handle location field - convert string to location object if needed
+    if (updateData.location && typeof updateData.location === 'string') {
+      updateData.location = {
+        address: updateData.location,
+        type: 'Point',
+        coordinates: [
+          updateData.longitude ? Number(updateData.longitude) : listing.location.coordinates[0],
+          updateData.latitude ? Number(updateData.latitude) : listing.location.coordinates[1]
+        ]
+      };
+      delete updateData.longitude;
+      delete updateData.latitude;
+    }
+
+    // Handle image uploads if any new images provided
+    if (req.files && req.files.length > 0) {
+      const newImages = [];
+      req.files.forEach(file => {
+        newImages.push(`/uploads/${file.filename}`);
+      });
+      updateData.images = newImages;
+    }
+
+    console.log('Updating listing with data:', JSON.stringify(updateData, null, 2));
+
     listing = await Listing.findByIdAndUpdate(
       req.params.id,
-      req.body,
+      updateData,
       { new: true, runValidators: true }
     );
 
@@ -216,6 +248,7 @@ exports.updateListing = async (req, res) => {
       data: listing
     });
   } catch (error) {
+    console.error('Error updating listing:', error);
     res.status(400).json({
       success: false,
       message: error.message

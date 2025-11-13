@@ -108,7 +108,24 @@
 }
 
 .image-upload-section {
-  margin-top: 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.existing-images,
+.new-images {
+  padding: 15px;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.existing-images p,
+.new-images p {
+  margin: 0 0 10px 0;
+  color: #374151;
+  font-weight: 600;
+  font-size: 14px;
 }
 
 .image-upload-label {

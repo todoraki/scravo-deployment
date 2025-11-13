@@ -72,6 +72,16 @@ function App() {
             }
           />
           <Route
+            path="/edit-listing/:id"
+            element={
+              <ProtectedRoute>
+                <MainLayout>
+                  <CreateListing />
+                </MainLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/my-listings"
             element={
               <ProtectedRoute>

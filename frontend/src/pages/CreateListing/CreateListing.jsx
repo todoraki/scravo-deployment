@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { listingAPI } from '../../utils/api';
 import './CreateListing.css';
 
 const CreateListing = () => {
   const navigate = useNavigate();
+  const { id } = useParams(); // Get listing ID from URL for edit mode
+  const isEditMode = Boolean(id);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [existingImages, setExistingImages] = useState([]);
 
   const [formData, setFormData] = useState({
     materialTitle: '',
@@ -25,6 +28,39 @@ const CreateListing = () => {
 
   const categories = ['Metals', 'Plastics', 'Paper', 'Glass', 'Electronics', 'Other'];
   const units = ['kg', 'tons', 'pieces', 'liters', 'meters'];
+
+  // Fetch existing listing data if in edit mode
+  useEffect(() => {
+    if (isEditMode) {
+      fetchListingData();
+    }
+  }, [id]);
+
+  const fetchListingData = async () => {
+    try {
+      setLoading(true);
+      const response = await listingAPI.getOne(id);
+      const listing = response.data.data;
+      
+      setFormData({
+        materialTitle: listing.materialTitle || '',
+        description: listing.description || '',
+        category: listing.category || '',
+        quantity: listing.quantity || '',
+        unit: listing.unit || '',
+        pricePerUnit: listing.pricePerUnit || '',
+        location: typeof listing.location === 'string' ? listing.location : listing.location?.address || '',
+        status: listing.status || 'active'
+      });
+      
+      setExistingImages(listing.images || []);
+    } catch (error) {
+      setError('Failed to fetch listing data');
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({
@@ -68,22 +104,29 @@ const CreateListing = () => {
     try {
       const formDataToSend = new FormData();
       
+      // Handle all form fields
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key]);
       });
 
+      // Add new images if any
       images.forEach(image => {
         formDataToSend.append('images', image);
       });
 
-      await listingAPI.create(formDataToSend);
+      if (isEditMode) {
+        await listingAPI.update(id, formDataToSend);
+        setSuccess('Listing updated successfully!');
+      } else {
+        await listingAPI.create(formDataToSend);
+        setSuccess('Listing created successfully!');
+      }
       
-      setSuccess('Listing created successfully!');
       setTimeout(() => {
         navigate('/my-listings');
       }, 1500);
     } catch (error) {
-      setError(error.response?.data?.message || 'Failed to create listing');
+      setError(error.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} listing`);
     } finally {
       setLoading(false);
     }
@@ -92,8 +135,8 @@ const CreateListing = () => {
   return (
     <div className="create-listing">
       <div className="page-header">
-        <h1>Create New Listing</h1>
-        <p>Add a new material listing to the marketplace</p>
+        <h1>{isEditMode ? 'Edit Listing' : 'Create New Listing'}</h1>
+        <p>{isEditMode ? 'Update your material listing' : 'Add a new material listing to the marketplace'}</p>
       </div>
 
       {error && (
@@ -231,6 +274,25 @@ const CreateListing = () => {
           <h3>Images</h3>
           
           <div className="image-upload-section">
+            {existingImages.length > 0 && (
+              <div className="existing-images">
+                <p><strong>Current Images:</strong></p>
+                <div className="image-previews">
+                  {existingImages.map((imgPath, index) => (
+                    <div key={`existing-${index}`} className="image-preview">
+                      <img 
+                        src={`http://localhost:5000${imgPath}`} 
+                        alt={`Existing ${index + 1}`}
+                        onError={(e) => {
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+            
             <label className="image-upload-label">
               <input
                 type="file"
@@ -241,25 +303,29 @@ const CreateListing = () => {
               />
               <div className="upload-placeholder">
                 <span style={{ fontSize: '48px' }}>📸</span>
-                <p>Click to upload images</p>
+                <p>{isEditMode ? 'Click to upload new images' : 'Click to upload images'}</p>
                 <span>Maximum 5 images (JPEG, PNG, GIF)</span>
+                {isEditMode && <span style={{ fontSize: '12px', color: '#6b7280' }}>New images will replace existing ones</span>}
               </div>
             </label>
 
             {imagePreviews.length > 0 && (
-              <div className="image-previews">
-                {imagePreviews.map((preview, index) => (
-                  <div key={index} className="image-preview">
-                    <img src={preview} alt={`Preview ${index + 1}`} />
-                    <button
-                      type="button"
-                      className="remove-image"
-                      onClick={() => removeImage(index)}
-                    >
-                      ✕
-                    </button>
-                  </div>
-                ))}
+              <div className="new-images">
+                <p><strong>New Images:</strong></p>
+                <div className="image-previews">
+                  {imagePreviews.map((preview, index) => (
+                    <div key={index} className="image-preview">
+                      <img src={preview} alt={`Preview ${index + 1}`} />
+                      <button
+                        type="button"
+                        className="remove-image"
+                        onClick={() => removeImage(index)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -278,7 +344,7 @@ const CreateListing = () => {
             className="btn btn-primary"
             disabled={loading}
           >
-            {loading ? 'Creating...' : 'Publish Listing'}
+            {loading ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Listing' : 'Publish Listing')}
           </button>
         </div>
       </form>
